@@ -1,0 +1,7 @@
+2026-03-28 18:49:42,208 - INFO - The bot just has started
+2026-03-28 18:49:42,838 - INFO - Start polling
+2026-03-28 18:49:42,938 - INFO - Run polling for bot @AkvtDiaryBot id=8605798631 - '\U0001f4d3 Дневник'
+2026-03-28 18:49:50,102 - INFO - Polling stopped
+2026-03-28 18:49:50,104 - ERROR - Failed to fetch updates - TelegramNetworkError: HTTP Client says - ServerDisconnectedError: Server disconnected
+2026-03-28 18:49:50,104 - WARNING - Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 8605798631)
+2026-03-28 18:49:50,357 - INFO - Polling stopped for bot @AkvtDiaryBot id=8605798631 - '\U0001f4d3 Дневник'
