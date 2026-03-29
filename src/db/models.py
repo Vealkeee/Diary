@@ -29,7 +29,6 @@ class Grade(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tgID: Mapped[int] = mapped_column(BIGINT, unique=True)
-    student_id: Mapped[int]
     subject_name: Mapped[str]
     grade: Mapped[int]
 
