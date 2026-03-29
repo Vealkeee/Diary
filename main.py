@@ -6,7 +6,10 @@ from rich.console import Console
 from aiogram import Dispatcher, Bot
 from dotenv import load_dotenv
 
-logging.basicConfig(level=logging.INFO, filename="logs\\runtimeLog.log", filemode='w',
+from src.db.models import Base
+from src.db.engine import localSession, engine
+
+logging.basicConfig(level=logging.INFO, filename="logs\\runtimeLog.log", filemode='a',
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 load_dotenv()
@@ -20,7 +23,9 @@ async def startup():
     bot = Bot(TOKEN)
     dp = Dispatcher()
 
-    # dp["db_pool"] = localSession
+    dp["db_pool"] = localSession
+
+    Base.metadata.create_all(engine)
 
     console.print(f"[bold green]BOT ID: {bot.id}\n" \
                   f"BOT TOKEN: {TOKEN}[bold green]\n" \
