@@ -37,7 +37,6 @@ class Class(Base):
     __tablename__ = "classes"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    tgID: Mapped[int] = mapped_column(BIGINT, unique=True)
     group_name: Mapped[str]
     subject_list: Mapped[list[str]] = mapped_column(JSON)
     subject_list_day: Mapped[str]
