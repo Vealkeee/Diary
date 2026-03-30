@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 from src.db.models import Base
 from src.db.engine import localSession, engine
 
+from src import router as main_router
+
 logging.basicConfig(level=logging.INFO, filename="logs\\runtimeLog.log", filemode='a',
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -26,6 +28,8 @@ async def startup():
     dp["db_pool"] = localSession
 
     Base.metadata.create_all(engine)
+
+    dp.include_router(main_router)
 
     console.print(f"[bold green]BOT ID: {bot.id}\n" \
                   f"BOT TOKEN: {TOKEN}[bold green]\n" \
