@@ -27,6 +27,7 @@ async def startup():
 
     dp["db_pool"] = localSession
 
+    Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 
     dp.include_router(main_router)
