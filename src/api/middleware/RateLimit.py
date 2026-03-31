@@ -4,7 +4,7 @@ from time import time
 
 request_counts = {}
 RATE_LIMIT = 5  # Max 5 requests
-TIME_WINDOW = 60
+TIME_WINDOW = 120
 
 class RateLimitMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):

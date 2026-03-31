@@ -10,6 +10,7 @@ class Student(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tgID: Mapped[int] = mapped_column(BIGINT, unique=True)
+    chat_id: Mapped[int] = mapped_column(BIGINT)
     first_name: Mapped[str]
     second_name: Mapped[str]
     group_name: Mapped[str]

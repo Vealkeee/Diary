@@ -1,0 +1,59 @@
+2026-03-31 22:20:54,534 - INFO - Starting the API server
+2026-03-31 22:21:45,799 - INFO - select pg_catalog.version()
+2026-03-31 22:21:45,800 - INFO - [raw sql] {}
+2026-03-31 22:21:45,802 - INFO - select current_schema()
+2026-03-31 22:21:45,802 - INFO - [raw sql] {}
+2026-03-31 22:21:45,803 - INFO - show standard_conforming_strings
+2026-03-31 22:21:45,803 - INFO - [raw sql] {}
+2026-03-31 22:21:45,807 - INFO - BEGIN (implicit)
+2026-03-31 22:21:45,808 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:21:45,814 - INFO - [generated in 0.00567s] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'Матвей', 'second_name': 'Бобров', 'group_name': 'ВЕБ-12'}
+2026-03-31 22:21:45,817 - INFO - COMMIT
+2026-03-31 22:21:57,696 - INFO - BEGIN (implicit)
+2026-03-31 22:21:57,697 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:21:57,698 - INFO - [cached since 11.89s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}
+2026-03-31 22:21:57,701 - INFO - ROLLBACK
+2026-03-31 22:21:57,707 - ERROR - an error occured: (psycopg.errors.UniqueViolation) повторяющееся значение ключа нарушает ограничение уникальности "students_tgID_key"
+DETAIL:  Ключ "("tgID")=(7905993904)" уже существует.
+[SQL: INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id]
+[parameters: {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-31 22:22:42,863 - INFO - BEGIN (implicit)
+2026-03-31 22:22:42,864 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:22:42,864 - INFO - [cached since 57.06s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}
+2026-03-31 22:22:42,866 - INFO - ROLLBACK
+2026-03-31 22:22:42,868 - ERROR - an error occured: (psycopg.errors.UniqueViolation) повторяющееся значение ключа нарушает ограничение уникальности "students_tgID_key"
+DETAIL:  Ключ "("tgID")=(7905993904)" уже существует.
+[SQL: INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id]
+[parameters: {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-31 22:23:51,648 - INFO - BEGIN (implicit)
+2026-03-31 22:23:51,649 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:23:51,649 - INFO - [cached since 125.8s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'Матвей', 'second_name': 'Бобров', 'group_name': 'ВЕБ-12'}
+2026-03-31 22:23:51,652 - INFO - COMMIT
+2026-03-31 22:24:40,032 - INFO - BEGIN (implicit)
+2026-03-31 22:24:40,032 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:24:40,033 - INFO - [cached since 174.2s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'Матвей', 'second_name': 'Бобров', 'group_name': 'ВЕБ-12'}
+2026-03-31 22:24:40,039 - INFO - COMMIT
+2026-03-31 22:25:06,621 - INFO - BEGIN (implicit)
+2026-03-31 22:25:06,622 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:25:06,623 - INFO - [cached since 200.8s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}
+2026-03-31 22:25:06,625 - INFO - ROLLBACK
+2026-03-31 22:25:06,630 - ERROR - an error occured: (psycopg.errors.UniqueViolation) повторяющееся значение ключа нарушает ограничение уникальности "students_tgID_key"
+DETAIL:  Ключ "("tgID")=(7905993904)" уже существует.
+[SQL: INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id]
+[parameters: {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+2026-03-31 22:29:13,738 - INFO - BEGIN (implicit)
+2026-03-31 22:29:13,740 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:29:13,741 - INFO - [cached since 447.9s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}
+2026-03-31 22:29:13,746 - INFO - COMMIT
+2026-03-31 22:29:27,155 - INFO - BEGIN (implicit)
+2026-03-31 22:29:27,155 - INFO - INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id
+2026-03-31 22:29:27,156 - INFO - [cached since 461.3s ago] {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}
+2026-03-31 22:29:27,156 - INFO - ROLLBACK
+2026-03-31 22:29:27,157 - ERROR - an error occured: (psycopg.errors.UniqueViolation) повторяющееся значение ключа нарушает ограничение уникальности "students_tgID_key"
+DETAIL:  Ключ "("tgID")=(7905993904)" уже существует.
+[SQL: INSERT INTO students ("tgID", chat_id, first_name, second_name, group_name) VALUES (%(tgID)s::BIGINT, %(chat_id)s::BIGINT, %(first_name)s::VARCHAR, %(second_name)s::VARCHAR, %(group_name)s::VARCHAR) RETURNING students.id]
+[parameters: {'tgID': 7905993904, 'chat_id': 7905993904, 'first_name': 'd', 'second_name': 'd', 'group_name': 'd'}]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
