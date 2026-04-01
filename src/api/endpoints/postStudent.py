@@ -1,11 +1,17 @@
-from fastapi import APIRouter, status, HTTPException, Depends
+import logging
+
+from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
 from src.db.models import Student
 from src.db.engine import localSession
 
 from sqlalchemy.orm import Session
+
 from typing import Annotated
+
+logging.basicConfig(level=logging.INFO, filename="logs\\runtimeLog.log", filemode='a',
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 router = APIRouter(prefix="/college/data")
 
@@ -42,4 +48,5 @@ async def GetStudentByID(userVal: Schema, db: sessionDep):
         return "Success!"
 
     except Exception as e:
+            logging.error(f"An error occured {e}")
             raise HTTPException(status_code=422, detail=f"Data didn't pass the validation... Either the server is fucked... {e}")

@@ -16,9 +16,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     request_times = request_counts[client_ip]
 
                     # Remove outdated requests outside the time window
-                    request_counts[client_ip] = [
-                        timestamp for timestamp in request_times if current_time - timestamp < TIME_WINDOW
-                    ]
+                    request_counts[client_ip] = [timestamp for timestamp in request_times if current_time - timestamp < TIME_WINDOW]
 
                     if len(request_counts[client_ip]) >= RATE_LIMIT:
                         raise HTTPException(status_code=429, detail="Too Many Requests")
