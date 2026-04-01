@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from typing import Annotated
 
-logging.basicConfig(level=logging.INFO, filename="logs\\runtimeLog.log", filemode='a',
+logging.basicConfig(level=logging.INFO, filename="logs\\endpointLog.log", filemode='a',
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 router = APIRouter(prefix="/college/data")
