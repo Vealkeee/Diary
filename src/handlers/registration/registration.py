@@ -11,9 +11,13 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from src.db.models import Student
 from sqlalchemy import select
 
+from redis import Redis
+
 errorStatus = [500, 422]
+restart = ["incorrect", "begginFromStart"]
 
 router = Router()
+redis = Redis(host="localhost", port="6379", decode_responses=True)
 
 class Schema(StatesGroup):
     first_name = State()
@@ -23,22 +27,26 @@ class Schema(StatesGroup):
 
 @router.callback_query(F.data == "agreement")
 async def getName(call: CallbackQuery, state: FSMContext, db_pool):
-
-    with db_pool() as session:
-
-        userID = call.from_user.id
-        stmt = (select(Student.tgID).
-                where(Student.tgID == userID))
-        
-        scalarID = session.scalar(stmt)
-
-    if not scalarID:
-        await call.answer()
-        await state.set_state(Schema.first_name)
-        await call.message.answer("<b>✨ ИМЯ СТУДЕНТА</b>\n\nПожалуйста введите своё настоящее имя.", parse_mode=ParseMode.HTML)
+    
+    attempts = int(redis.get("attempt"))
+    if attempts < 5:
+        await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
     else:
-        await call.answer()
-        await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nВы уже <b>АВТОРИЗОВАНЫ.</b>", parse_mode=ParseMode.HTML)
+        with db_pool() as session:
+
+            userID = call.from_user.id
+            stmt = (select(Student.tgID).
+                    where(Student.tgID == userID))
+            
+            scalarID = session.scalar(stmt)
+
+        if not scalarID:
+            await call.answer()
+            await state.set_state(Schema.first_name)
+            await call.message.answer("<b>✨ ИМЯ СТУДЕНТА</b>\n\nПожалуйста введите своё настоящее имя.", parse_mode=ParseMode.HTML)
+        else:
+            await call.answer()
+            await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nВы уже <b>АВТОРИЗОВАНЫ.</b>", parse_mode=ParseMode.HTML)
 
 @router.message(Schema.first_name)
 async def getFam(message: Message, state: FSMContext):
@@ -46,13 +54,19 @@ async def getFam(message: Message, state: FSMContext):
     await state.update_data(firstName=message.text,
                             tgID=message.from_user.id,
                             chatID=message.chat.id)
-    await message.answer("<b>✨ ФАМИЛИЯ СТУДЕНТА</b>\n\nПожалуйста введите свою настоящую фамилию.", parse_mode=ParseMode.HTML)
+    kb = InlineKeyboardBuilder()
+    kb.button(text="🔙 Вернуться", callback_data="back1")
+    keyboard = kb.as_markup()
+    await message.answer("<b>✨ ФАМИЛИЯ СТУДЕНТА</b>\n\nПожалуйста введите свою настоящую фамилию.", parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 @router.message(Schema.second_name)
 async def getGroup(message: Message, state: FSMContext):
     await state.set_state(Schema.group_name)
     await state.update_data(secondName=message.text)
-    await message.answer(f"<b>✨ ГРУППА СТУДЕНТА</b>\n\nПожалуйста введите свою учебную группу.", parse_mode=ParseMode.HTML)
+    kb = InlineKeyboardBuilder()
+    kb.button(text="🔙 Вернуться", callback_data="back2")
+    keyboard = kb.as_markup()
+    await message.answer(f"<b>✨ ГРУППА СТУДЕНТА</b>\n\nПожалуйста введите свою учебную группу.", parse_mode=ParseMode.HTM, reply_markup=keyboard)
 
 @router.message(Schema.group_name)
 async def getGroup(message: Message, state: FSMContext):
@@ -75,12 +89,16 @@ async def getGroup(message: Message, state: FSMContext):
                          f"<b>Имя</b>: {firstName}\n<b>Фамилия</b>: {secondName}\n<b>Группа</b>: {groupName}", parse_mode=ParseMode.HTML, reply_markup=ensure_kb)
 
 
-@router.callback_query(F.data == "incorrect")
+@router.callback_query(F.data.in_(restart))
 async def uploadUser(call: CallbackQuery, state: FSMContext):
-    await call.answer()
-    await state.clear()
-    await state.set_state(Schema.first_name)
-    await call.message.answer(f"<b>✨ ИМЯ СТУДЕНТА</b>\n\nПожалуйста введите своё настоящее имя.", parse_mode=ParseMode.HTML)
+    attempts = int(redis.get("attempt"))
+    if attempts < 5:
+        await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
+    else:
+        await call.answer()
+        await state.clear()
+        await state.set_state(Schema.first_name)
+        await call.message.answer(f"<b>✨ ИМЯ СТУДЕНТА</b>\n\nПожалуйста введите своё настоящее имя.", parse_mode=ParseMode.HTML)
 
 @router.callback_query(F.data == "correct")
 async def uploadUser(call: CallbackQuery, state: FSMContext):
@@ -113,8 +131,14 @@ async def uploadUser(call: CallbackQuery, state: FSMContext):
     if response.status_code not in errorStatus:
         await call.message.answer("<b>✨ ВЫБОР РОЛИ</b>\n\nПожалуйста выберите свою роль.", parse_mode=ParseMode.HTML, reply_markup=ensure_kb)
     else:
-        kb = InlineKeyboardBuilder()
-        kb.button(text="📝 Начать сначала", callback_data="begginFromStart")
-        reAuth_kb = kb.as_markup()
+        attempts = int(redis.get("attempt")) + 1
+        print(attempts)
+        if attempts < 5:
+            redis.set("attempt", attempts)
+            kb = InlineKeyboardBuilder()
+            kb.button(text="📝 Начать сначала", callback_data="begginFromStart")
+            reAuth_kb = kb.as_markup()
 
-        await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nНеправильный ввод данных, либо вы превысили лимит отправки запросов ( 5/2мин ). Попробуйте ещё.", parse_mode=ParseMode.HTML, reply_markup=reAuth_kb)
+            await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nНеправильный ввод данных, либо вы превысили лимит отправки запросов ( 5/2мин ). Попробуйте ещё.", parse_mode=ParseMode.HTML, reply_markup=reAuth_kb)
+        else:
+            await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
