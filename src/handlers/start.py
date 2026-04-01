@@ -8,8 +8,10 @@ from src.db.models import Student
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from aiogram import Router, F
+from redis import Redis
 
 router = Router()
+redis = Redis(host="localhost", port="6379", decode_responses=True)
 
 @router.message(CommandStart())
 async def welcome(message: Message, db_pool):
@@ -26,6 +28,8 @@ async def welcome(message: Message, db_pool):
         kb = InlineKeyboardBuilder()
         kb.button(text="✅", callback_data="agreement")
         start_kb = kb.as_markup()
+
+        redis.set("attempt", 0, ex=86400)
 
         await message.answer('💼 <b>ДОБРО ПОЖАЛОВАТЬ!</b>\n\nВ электронный журнал "Астраханского Колледжа Вычислительной Техники"!\n\n'\
                             'Если вы готовы приступить к регистрации, нажмите на галочку.', parse_mode=ParseMode.HTML, reply_markup=start_kb)
