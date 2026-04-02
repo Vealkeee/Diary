@@ -18,9 +18,10 @@ async def backToOne(call: CallbackQuery, state: FSMContext):
     await call.message.answer("<b>✨ ИМЯ СТУДЕНТА</b>\n\nПожалуйста введите своё настоящее имя.", parse_mode=ParseMode.HTML)
 
 @router.callback_query(F.data == "back2")
-async def backToOne(message: Message, state: FSMContext):
+async def backToSecond(call: CallbackQuery, state: FSMContext):
+    await call.answer()
     await state.set_state(Schema.second_name)
     kb = InlineKeyboardBuilder()
     kb.button(text="🔙 Вернуться", callback_data="back1")
     keyboard = kb.as_markup()
-    await message.answer("<b>✨ ФАМИЛИЯ СТУДЕНТА</b>\n\nПожалуйста введите свою настоящую фамилию.", parse_mode=ParseMode.HTML, reply_markup=keyboard)
+    await call.message.answer("<b>✨ ФАМИЛИЯ СТУДЕНТА</b>\n\nПожалуйста введите свою настоящую фамилию.", parse_mode=ParseMode.HTML, reply_markup=keyboard)
