@@ -29,7 +29,7 @@ class Schema(StatesGroup):
 async def getName(call: CallbackQuery, state: FSMContext, db_pool):
     
     attempts = int(redis.get("attempt"))
-    if attempts < 5:
+    if attempts == 5:
         await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
     else:
         with db_pool() as session:
@@ -66,10 +66,10 @@ async def getGroup(message: Message, state: FSMContext):
     kb = InlineKeyboardBuilder()
     kb.button(text="🔙 Вернуться", callback_data="back2")
     keyboard = kb.as_markup()
-    await message.answer(f"<b>✨ ГРУППА СТУДЕНТА</b>\n\nПожалуйста введите свою учебную группу.", parse_mode=ParseMode.HTM, reply_markup=keyboard)
+    await message.answer(f"<b>✨ ГРУППА СТУДЕНТА</b>\n\nПожалуйста введите свою учебную группу.", parse_mode=ParseMode.HTML, reply_markup=keyboard)
 
 @router.message(Schema.group_name)
-async def getGroup(message: Message, state: FSMContext):
+async def EnsureTheData(message: Message, state: FSMContext):
     await state.set_state(Schema.ensure)
     await state.update_data(group=message.text)
 
@@ -92,7 +92,7 @@ async def getGroup(message: Message, state: FSMContext):
 @router.callback_query(F.data.in_(restart))
 async def uploadUser(call: CallbackQuery, state: FSMContext):
     attempts = int(redis.get("attempt"))
-    if attempts < 5:
+    if attempts == 5:
         await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
     else:
         await call.answer()
@@ -101,14 +101,8 @@ async def uploadUser(call: CallbackQuery, state: FSMContext):
         await call.message.answer(f"<b>✨ ИМЯ СТУДЕНТА</b>\n\nПожалуйста введите своё настоящее имя.", parse_mode=ParseMode.HTML)
 
 @router.callback_query(F.data == "correct")
-async def uploadUser(call: CallbackQuery, state: FSMContext):
+async def uploadUser(call: CallbackQuery, state: FSMContext, db_pool):
     await call.answer()
-
-    kb = InlineKeyboardBuilder()
-    kb.button(text="🎓 Студент", callback_data="student")
-    kb.button(text="💼 Староста", callback_data="headman")
-    kb.adjust(1, 1)
-    ensure_kb = kb.as_markup()
 
     data = await state.get_data()
 
@@ -118,27 +112,44 @@ async def uploadUser(call: CallbackQuery, state: FSMContext):
     tgID = data.get("tgID")
     chat_id = data.get("chatID")
 
-    json = {
-        "first_name": firstName,
-        "second_name": secondName,
-        "group_name": groupName,
-        "tgID": tgID,
-        "chat_id": chat_id
-    }
+    with db_pool() as db:
 
-    response = requests.post("http://127.0.0.1:7272/college/data/student", json=json)
+        stmt = (
+            select(Student).
+            where(Student.first_name == firstName, Student.second_name == secondName)
+        )
 
-    if response.status_code not in errorStatus:
-        await call.message.answer("<b>✨ ВЫБОР РОЛИ</b>\n\nПожалуйста выберите свою роль.", parse_mode=ParseMode.HTML, reply_markup=ensure_kb)
-    else:
-        attempts = int(redis.get("attempt")) + 1
-        print(attempts)
-        if attempts < 5:
-            redis.set("attempt", attempts)
+        value = db.scalar(stmt)
+
+    if not value:
+        json = {
+            "first_name": firstName,
+            "second_name": secondName,
+            "group_name": groupName,
+            "tgID": tgID,
+            "chat_id": chat_id
+        }
+
+        response = requests.post("http://127.0.0.1:7272/college/data/student", json=json)
+
+        if response.status_code not in errorStatus:
             kb = InlineKeyboardBuilder()
-            kb.button(text="📝 Начать сначала", callback_data="begginFromStart")
-            reAuth_kb = kb.as_markup()
-
-            await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nНеправильный ввод данных, либо вы превысили лимит отправки запросов ( 5/2мин ). Попробуйте ещё.", parse_mode=ParseMode.HTML, reply_markup=reAuth_kb)
+            kb.button(text="🎓 Студент", callback_data="student")
+            kb.button(text="💼 Староста", callback_data="headman")
+            kb.adjust(1, 1)
+            ensure_kb = kb.as_markup()
+            await call.message.answer("<b>✨ ВЫБОР РОЛИ</b>\n\nПожалуйста выберите свою роль.", parse_mode=ParseMode.HTML, reply_markup=ensure_kb)
         else:
-            await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
+            attempts = int(redis.get("attempt")) + 1
+            print(attempts)
+            if attempts == 5:
+                redis.set("attempt", attempts)
+                kb = InlineKeyboardBuilder()
+                kb.button(text="📝 Начать сначала", callback_data="begginFromStart")
+                reAuth_kb = kb.as_markup()
+
+                await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nНеправильный ввод данных, либо вы превысили лимит отправки запросов ( 5/2мин ). Попробуйте ещё.", parse_mode=ParseMode.HTML, reply_markup=reAuth_kb)
+            else:
+                await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nОтправлено 5 запросов в течение 2-х минут. Попробуйте снова через 24 часа.", parse_mode=ParseMode.HTML)
+    else:
+        await call.message.answer("<b>❌ ОТКАЗАНО</b>\n\nПользователь с таким именем и фамилией уже существует.", parse_mode=ParseMode.HTML)
