@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
-from src.db.models import Student
+from src.db.models import Group
 from src.db.engine import localSession
 
 from sqlalchemy.orm import Session
@@ -25,22 +25,22 @@ async def getDB():
 sessionDep = Annotated[Session, Depends(getDB)]
 
 class Schema(BaseModel):
-    first_name: str = Field(max_length=14)
-    second_name: str = Field(max_length=14)
+    headman_second_name: str = Field(max_length=14)
+    headman_name: str = Field(max_length=14)
+    headman_tgID: int
+    headman_pw: str
     group_name: str = Field(max_length=6)
-    tgID: int
-    chat_id: int
 
-@router.post("/student")
-async def PostStudentByID(userVal: Schema, db: sessionDep):
+@router.post("/headman")
+async def PostHeadmanByID(userVal: Schema, db: sessionDep):
     try:
         
-        user = Student(
-            first_name = userVal.first_name,
-            second_name = userVal.second_name,
-            group_name = userVal.group_name,
-            tgID = userVal.tgID,
-            chat_id = userVal.chat_id
+        user = Group(
+            headman_second_name = userVal.headman_second_name,
+            headman_name = userVal.headman_name,
+            headman_tgID = userVal.headman_tgID,
+            headman_pw = userVal.headman_pw,
+            group_name = userVal.group_name
         )
 
         db.add(user)
