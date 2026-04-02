@@ -22,6 +22,8 @@ class Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     group_name: Mapped[str]
     headman_name: Mapped[str]
+    headman_second_name: Mapped[str]
+    headman_pw: Mapped[str]
     headman_tgID: Mapped[int] = mapped_column(BIGINT, unique=True)
 
 class Grade(Base):
