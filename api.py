@@ -4,7 +4,8 @@ import logging
 from fastapi import FastAPI
 
 from src.api.middleware.RateLimit import RateLimitMiddleware
-from src.api.endpoints.postStudent import router as getStudent
+from src.api.endpoints.postStudent import router as postStudent
+from src.api.endpoints.postHeadman import router as postHeadman
 
 logging.basicConfig(level=logging.INFO, filename="./logs/runtimeLog.log", filemode='a',
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -12,7 +13,8 @@ logging.basicConfig(level=logging.INFO, filename="./logs/runtimeLog.log", filemo
 app = FastAPI()
 
 app.add_middleware(RateLimitMiddleware)
-app.include_router(getStudent)
+app.include_router(postStudent)
+app.include_router(postHeadman)
 
 if __name__ == "__main__":
     try:
