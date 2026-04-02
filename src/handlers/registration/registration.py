@@ -143,7 +143,7 @@ async def uploadUser(call: CallbackQuery, state: FSMContext, db_pool):
             attempts = int(redis.get("attempt")) + 1
             print(attempts)
             if attempts == 5:
-                redis.set("attempt", attempts)
+                redis.set("attempt", attempts, ex=86400)
                 kb = InlineKeyboardBuilder()
                 kb.button(text="📝 Начать сначала", callback_data="begginFromStart")
                 reAuth_kb = kb.as_markup()

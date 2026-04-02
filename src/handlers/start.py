@@ -29,7 +29,7 @@ async def welcome(message: Message, db_pool):
         kb.button(text="✅", callback_data="agreement")
         start_kb = kb.as_markup()
 
-        redis.set("attempt", 0, ex=86400)
+        redis.set("attempt", 0, ex=120)
 
         await message.answer('💼 <b>ДОБРО ПОЖАЛОВАТЬ!</b>\n\nВ электронный журнал "Астраханского Колледжа Вычислительной Техники"!\n\n'\
                             'Если вы готовы приступить к регистрации, нажмите на галочку.', parse_mode=ParseMode.HTML, reply_markup=start_kb)
