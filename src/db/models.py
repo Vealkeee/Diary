@@ -33,8 +33,8 @@ class Grade(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     tgID: Mapped[int] = mapped_column(BIGINT, unique=True)
-    subject_name: Mapped[str]
-    grade: Mapped[int]
+    subject_name: Mapped[str | None] = mapped_column(nullable=True)
+    grade: Mapped[int | None] = mapped_column(nullable=True)
 
 class Class(Base):
 
