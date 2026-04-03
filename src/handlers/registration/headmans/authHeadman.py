@@ -48,6 +48,6 @@ async def UserPWinput(message: Message, state: FSMContext, db_pool):
         value = db.scalar(stmt2)
 
         if value == password:
-            await message.answer("🎓 <b>Главное меню</b>", parse_mode=ParseMode.HTML, reply_markup=headman_main)
+            await message.answer("🎓 <b>Главное меню</b>\n\nЗдесь вы можете посмотреть оценки, домашнее задание и расписание.\n\nА также, внести изменения в данные категории как староста.", parse_mode=ParseMode.HTML, reply_markup=headman_main)
         else:
             await message.answer("❌ <b>ОТКАЗАНО</b>", parse_mode=ParseMode.HTML)

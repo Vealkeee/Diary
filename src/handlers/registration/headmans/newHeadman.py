@@ -52,7 +52,7 @@ async def createHeadman(call: CallbackQuery, db_pool):
             
             requests.post(url="http://127.0.0.1:7272/college/data/headman", json=json)
             await call.message.answer(f"✅ <b>УСПЕХ</b>\n\nАвторизация прошла успешно.\nПароль от аккаунта: <code>{headman_pw}</code>", parse_mode=ParseMode.HTML)
-            await call.message.answer("🎓 <b>Главное меню</b>", parse_mode=ParseMode.HTML, reply_markup=headman_main)
+            await call.message.answer("🎓 <b>Главное меню</b>\n\nЗдесь вы можете посмотреть оценки, домашнее задание и расписание.\n\nА также, внести изменения в данные категории как староста.", parse_mode=ParseMode.HTML, reply_markup=headman_main)
         else:
             kb = InlineKeyboardBuilder()
             kb.button(text="✨ Ввести пароль", callback_data="PW_input")
