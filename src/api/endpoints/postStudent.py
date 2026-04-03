@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
-from src.db.models import Student
+from src.db.models import Student, Grade
 from src.db.engine import localSession
 
 from sqlalchemy.orm import Session
@@ -43,7 +43,11 @@ async def PostStudentByID(userVal: Schema, db: sessionDep):
             chat_id = userVal.chat_id
         )
 
-        db.add(user)
+        userGrades = Grade(
+            tgID = userVal.tgID
+        )
+
+        db.add_all([user, userGrades])
         db.commit()
         return "Success!"
 

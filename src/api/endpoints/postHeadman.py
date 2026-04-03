@@ -40,7 +40,8 @@ async def PostHeadmanByID(userVal: Schema, db: sessionDep):
             headman_name = userVal.headman_name,
             headman_tgID = userVal.headman_tgID,
             headman_pw = userVal.headman_pw,
-            group_name = userVal.group_name
+            group_name = userVal.group_name,
+            connected = True
         )
 
         db.add(user)
