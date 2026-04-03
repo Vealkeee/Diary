@@ -16,6 +16,6 @@ router.include_routers(
     backToRegister.router,
     newHeadman.router,
     authHeadman.router,
-    studentConnect.router,
-    authStudent.router
+    authStudent.router,
+    studentConnect.router
 )

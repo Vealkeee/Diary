@@ -17,3 +17,15 @@ headman_main = InlineKeyboardMarkup(
         ]
     ]
 )
+
+student_main = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text="🧮 Успеваемость", callback_data="grades_status"),
+            InlineKeyboardButton(text="📝 Домашняя работа", callback_data="homework")
+        ],
+        [
+            InlineKeyboardButton(text="🗓️ Расписание", callback_data="schedule")
+        ]
+    ]
+)
