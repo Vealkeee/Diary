@@ -14,6 +14,7 @@ class Student(Base):
     first_name: Mapped[str]
     second_name: Mapped[str]
     group_name: Mapped[str]
+    register: Mapped[bool | None] = mapped_column(nullable=True, default=None)
     connected: Mapped[bool | None] = mapped_column(nullable=True, default=None)
 
 class Group(Base):
