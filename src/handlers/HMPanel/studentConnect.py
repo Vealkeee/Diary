@@ -37,23 +37,25 @@ async def ConnectStudentToGroup(call: CallbackQuery, db_pool):
             await call.message.answer(f"📶 <b>ПРИВЯЗКА</b>\n\nНа данный момент остутствуют пользователи для привязки.", parse_mode=ParseMode.HTML)
         else:
             for item in value:
-                kb.button(text=f"{item[1]} {item[2]}", callback_data=f"{item[0]}")
+                kb.button(text=f"{item[1]} {item[2]}", callback_data=f"verified:{item[0]}")
             kb.adjust(2, 2, repeat=True)
             keyboard = kb.as_markup()
             await call.message.answer(f"📶 <b>ПРИВЯЗКА</b>\n\nВыберите пользователя для привязки к группе...", reply_markup=keyboard, parse_mode=ParseMode.HTML)
 
     await call.message.answer()
 
-@router.callback_query()
+@router.callback_query(F.data.contains("verified:"))
 async def connectStudent(call: CallbackQuery, db_pool):
 
     await call.answer()
 
+    user_id = int(call.data.split(":")[1])
+
     with db_pool() as db:
-        
+
         updateStudentState = (
             update(Student).
-            where(Student.tgID == call.from_user.id).
+            where(Student.tgID == user_id).
             values(connected=True)
         )
 
