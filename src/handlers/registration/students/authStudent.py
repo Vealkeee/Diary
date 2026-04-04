@@ -1,6 +1,11 @@
+import os
+import asyncio
+
+from dotenv import load_dotenv
+
 from aiogram.types import CallbackQuery
 from aiogram.enums import ParseMode
-from aiogram import Router, F
+from aiogram import Router, F, Bot
 
 from sqlalchemy import select, update
 from src.db.models import Group, Student
@@ -8,6 +13,10 @@ from src.db.engine import localSession
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 router = Router()
+load_dotenv()
+TOKEN = os.getenv("BOT")
+bot = Bot(TOKEN)
+message_ids = []
 
 @router.callback_query(F.data == "student")
 async def CreateConnectionKB(call: CallbackQuery, db_pool):
@@ -46,12 +55,21 @@ async def CreateConnectionKB(call: CallbackQuery, db_pool):
                 keyboard = kb.as_markup()
                 await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nДля <b>отправки привязки</b> к старосте, нажмите снизу на его инициалы... Через <b>24 часа</b> введите комманду старт...", parse_mode=ParseMode.HTML, reply_markup=keyboard)
             except Exception:
-                await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nВ вашей группе отсутствует староста... Попробуйте позже.", parse_mode=ParseMode.HTML)
+                bot_message = await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nВ вашей группе отсутствует староста... Попробуйте позже.", parse_mode=ParseMode.HTML)
+                message_ids.append(bot_message.message_id)
         elif status == True:
-            await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nАккаунт уже <b>привязан</b> к старосте...", parse_mode=ParseMode.HTML)
+            bot_message = await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nАккаунт уже <b>привязан</b> к старосте...", parse_mode=ParseMode.HTML)
+            message_ids.append(bot_message.message_id)
         else:
-            await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nАккаунт находится в процессе привязки...", parse_mode=ParseMode.HTML)
-        
+            bot_message = await call.message.answer("<b>🎄 ПРИВЯЗКА</b>\n\nАккаунт находится в процессе привязки...", parse_mode=ParseMode.HTML)
+            message_ids.append(bot_message.message_id)
+    
+    chat_id = call.message.chat.id
+
+    await asyncio.sleep(5)
+
+    await bot.delete_messages(chat_id, message_ids)
+
 @router.callback_query(F.data.contains("connect:"))
 async def connectStudent(call: CallbackQuery, db_pool):
 
