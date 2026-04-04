@@ -3,10 +3,11 @@ import logging
 from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel, Field
 
-from src.db.models import Group
+from src.db.models import Group, Student
 from src.db.engine import localSession
 
 from sqlalchemy.orm import Session
+from sqlalchemy import select, update
 
 from typing import Annotated
 
@@ -40,11 +41,17 @@ async def PostHeadmanByID(userVal: Schema, db: sessionDep):
             headman_name = userVal.headman_name,
             headman_tgID = userVal.headman_tgID,
             headman_pw = userVal.headman_pw,
-            group_name = userVal.group_name,
-            connected = True
+            group_name = userVal.group_name
+        )
+
+        stmt = (
+             update(Student).
+             where(Student.tgID == userVal.headman_tgID).
+             values(connected=True)
         )
 
         db.add(user)
+        db.execute(stmt)
         db.commit()
         return "Success!"
 

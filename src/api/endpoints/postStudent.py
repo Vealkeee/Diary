@@ -30,6 +30,7 @@ class Schema(BaseModel):
     group_name: str = Field(max_length=6)
     tgID: int
     chat_id: int
+    register: bool
 
 @router.post("/student")
 async def PostStudentByID(userVal: Schema, db: sessionDep):
@@ -40,7 +41,8 @@ async def PostStudentByID(userVal: Schema, db: sessionDep):
             second_name = userVal.second_name,
             group_name = userVal.group_name,
             tgID = userVal.tgID,
-            chat_id = userVal.chat_id
+            chat_id = userVal.chat_id,
+            register = userVal.register
         )
 
         userGrades = Grade(
