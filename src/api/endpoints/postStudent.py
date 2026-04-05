@@ -45,11 +45,7 @@ async def PostStudentByID(userVal: Schema, db: sessionDep):
             register = userVal.register
         )
 
-        userGrades = Grade(
-            tgID = userVal.tgID
-        )
-
-        db.add_all([user, userGrades])
+        db.add(user)
         db.commit()
         return "Success!"
 
