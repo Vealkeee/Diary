@@ -6,6 +6,7 @@ from fastapi import FastAPI
 from src.api.middleware.RateLimit import RateLimitMiddleware
 from src.api.endpoints.postStudent import router as postStudent
 from src.api.endpoints.postHeadman import router as postHeadman
+from src.api.endpoints.postInsertGrades import router as postInsertGrades
 
 logging.basicConfig(level=logging.INFO, filename="./logs/runtimeLog.log", filemode='a',
                     format='%(asctime)s - %(levelname)s - %(message)s')
@@ -15,6 +16,7 @@ app = FastAPI()
 app.add_middleware(RateLimitMiddleware)
 app.include_router(postStudent)
 app.include_router(postHeadman)
+app.include_router(postInsertGrades)
 
 if __name__ == "__main__":
     try:
