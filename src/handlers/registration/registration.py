@@ -189,14 +189,15 @@ async def uploadUser(call: CallbackQuery, state: FSMContext, db_pool):
                 kb.button(text="💼 Староста", callback_data="headman")
                 kb.adjust(1, 1)
                 ensure_kb = kb.as_markup()
-                bot_message2 = await call.message.answer("<b>‼️ 15 СЕКУНД ДО ОЧИСТКИ</b>\n\n", parse_mode=ParseMode.HTML)
-                bot_message1 = await call.message.answer("<b>✨ ВЫБОР РОЛИ</b>\n\nПожалуйста выберите свою роль.", parse_mode=ParseMode.HTML, reply_markup=ensure_kb)
+                bot_message1 = await call.message.answer("<b>‼️ 30 СЕКУНД ДО ОЧИСТКИ</b>\n\n", parse_mode=ParseMode.HTML)
+                bot_message2 = await call.message.answer("<b>✨ ВЫБОР РОЛИ</b>\n\nПожалуйста выберите свою роль.", parse_mode=ParseMode.HTML, reply_markup=ensure_kb)
                 message_ids.append(bot_message1.message_id)
                 message_ids.append(bot_message2.message_id)
-                await asyncio.sleep(15)
                 chat = bot_message1.chat.id
+                bot_message3 = await call.message.answer("<b>Введите комманду /start если меню не открылось. Или что бы проверить привязку аккаунта.</b>", parse_mode=ParseMode.HTML)
+                message_ids.append(bot_message3.message_id)
+                await asyncio.sleep(30)
                 await bot.delete_messages(chat, message_ids)
-                await call.message.answer("<b>Введите комманду /start если меню не открылось. Или что бы проверить привязку аккаунта.</b>", parse_mode=ParseMode.HTML)
             else:
                 attempts = int(redis.get("attempt")) + 1
                 print(attempts)
