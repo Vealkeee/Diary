@@ -1,5 +1,5 @@
-from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase
-from sqlalchemy import BIGINT, JSON
+from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase, relationship
+from sqlalchemy import BIGINT, JSON, ForeignKey
 
 class Base(DeclarativeBase):
     pass
@@ -16,6 +16,10 @@ class Student(Base):
     group_name: Mapped[str]
     register: Mapped[bool | None] = mapped_column(nullable=True, default=None)
     connected: Mapped[bool | None] = mapped_column(nullable=True, default=None)
+    grades: Mapped[list["Grade"]] = relationship(
+        back_populates="student",
+        cascade="all, delete-orphan"
+    )
 
 class Group(Base):
 
@@ -33,9 +37,12 @@ class Grade(Base):
     __tablename__ = "grades"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    tgID: Mapped[int] = mapped_column(BIGINT, unique=True)
+    student_id: Mapped[int] = mapped_column(ForeignKey("students.id"))
     subject_name: Mapped[str | None] = mapped_column(nullable=True)
-    grade: Mapped[int | None] = mapped_column(nullable=True)
+    grade: Mapped[int | list[int]] = mapped_column(JSON)
+    student: Mapped["Student"] = relationship(
+        back_populates="grades"
+    )
 
 class Class(Base):
 
